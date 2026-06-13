@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lohan — Productivity Sanctum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0a14;
+      --surface: #140f1e;
+      --surface2: #1c1428;
+      --border: rgba(180,120,220,0.18);
+      --border2: rgba(180,120,220,0.32);
+      --pink: #d066b0;
+      --pink-light: #e8a0d8;
+      --purple: #8b5cf6;
+      --purple-dark: #6d3fc8;
+      --violet: #c084fc;
+      --muted: rgba(220,190,255,0.45);
+      --text: rgba(240,220,255,0.92);
+      --text2: rgba(200,170,240,0.65);
+      --danger: #f87171;
+      --success: #a3e635;
+      --warning: #fbbf24;
+      --info: #60a5fa;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Crimson Text', serif;
+      min-height: 100vh;
+    }
+
+    .app { min-height: 100vh; background: var(--bg); }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(160deg, #1a0f28 0%, #0d0a14 60%, #180d24 100%);
+      border-bottom: 0.5px solid var(--border2);
+      padding: 28px 28px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+
+    .logo-text {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 36px;
+      color: var(--violet);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+    @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+
+    .stat-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--violet);
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'Crimson Text', serif;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    /* LAYOUT */
+    .main {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      min-height: calc(100vh - 190px);
+    }
+
+    @media (max-width: 860px) {
+      .main { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 0.5px solid var(--border); }
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background: var(--surface);
+      border-right: 0.5px solid var(--border);
+      padding: 24px 18px;
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: 'Crimson Text', serif;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: left;
+      margin-bottom: 4px;
+      transition: all 0.2s;
+    }
+
+    .cat-btn:hover { background: rgba(180,100,240,0.1); color: var(--text); }
+    .cat-btn.active { background: rgba(180,100,240,0.18); color: var(--violet); border: 0.5px solid var(--border2); }
+
+    .cat-icon { font-size: 17px; width: 22px; text-align: center; }
+
+    .cat-count {
+      margin-left: auto;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      background: rgba(180,100,240,0.15);
+      color: var(--violet);
+      border-radius: 20px;
+      padding: 1px 8px;
+    }
+
+    .sidebar-sep { border: none; border-top: 0.5px solid var(--border); margin: 16px 0; }
+
+    .priority-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .p-high { background: var(--danger); }
+    .p-med  { background: var(--warning); }
+    .p-low  { background: var(--info); }
+
+    /* FONT SHOWCASE */
+    .font-showcase {
+      background: rgba(0,0,0,0.2);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-top: 8px;
+    }
+
+    .font-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .font-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .font-name {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      min-width: 110px;
+    }
+
+    /* CONTENT */
+    .content { padding: 24px 28px; overflow-y: auto; }
+
+    @media (max-width: 600px) { .content { padding: 16px; } }
+
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .section-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: 0.5px solid var(--border2);
+      background: transparent;
+      color: var(--text2);
+      font-family: 'Crimson Text', serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: rgba(180,100,240,0.12); color: var(--text); border-color: var(--purple); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple-dark), var(--pink));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-primary:hover { opacity: 0.88; color: #fff; }
+
+    .btn-danger { border-color: rgba(248,113,113,0.3); }
+    .btn-danger:hover { background: rgba(248,113,113,0.12); color: var(--danger); border-color: var(--danger); }
+
+    /* ADD ROW */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: var(--surface);
+      border: 0.5px solid var(--border2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      align-items: center;
+    }
+
+    .add-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Crimson Text', serif;
+      font-size: 16px;
+    }
+
+    .add-input::placeholder { color: var(--muted); font-style: italic; }
+
+    /* FILTER CHIPS */
+    .filter-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+
+    .filter-chip {
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 0.5px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover { border-color: var(--purple); color: var(--violet); }
+    .filter-chip.active { background: rgba(139,92,246,0.2); border-color: var(--purple); color: var(--violet); }
+
+    /* PROGRESS */
+    .progress-bar-wrap {
+      background: rgba(180,100,240,0.1);
+      border-radius: 20px;
+      height: 5px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, var(--purple-dark), var(--pink));
+      transition: width 0.4s ease;
+    }
+
+    /* TASK GROUPS */
+    .task-group { margin-bottom: 26px; }
+
+    .task-group-title {
+      font-family: 'IM Fell English', serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-group-title::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    /* TASK ITEMS */
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      border: 0.5px solid var(--border);
+      background: var(--surface);
+      margin-bottom: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .task-item:hover { border-color: var(--border2); background: var(--surface2); }
+    .task-item.done { opacity: 0.48; }
+
+    .task-check {
+      width: 19px;
+      height: 19px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .task-check.checked {
+      background: linear-gradient(135deg, var(--purple-dark), var(--pink));
+      border-color: transparent;
+    }
+
+    .task-check.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .task-body { flex: 1; min-width: 0; }
+
+    .task-title {
+      font-family: 'Crimson Text', serif;
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .task-item.done .task-title { text-decoration: line-through; color: var(--text2); }
+
+    .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+
+    .badge {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .badge-high   { background: rgba(248,113,113,0.15); color: var(--danger); border: 0.5px solid rgba(248,113,113,0.3); }
+    .badge-medium { background: rgba(251,191,36,0.12);  color: var(--warning); border: 0.5px solid rgba(251,191,36,0.25); }
+    .badge-low    { background: rgba(96,165,250,0.12);  color: var(--info);    border: 0.5px solid rgba(96,165,250,0.25); }
+    .badge-cat    { background: rgba(192,132,252,0.12); color: var(--violet);  border: 0.5px solid rgba(192,132,252,0.25); }
+
+    .task-due { font-family: 'IM Fell English', serif; font-size: 12px; color: var(--muted); font-style: italic; }
+
+    .task-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+    .task-item:hover .task-actions { opacity: 1; }
+
+    .icon-btn {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover { background: rgba(248,113,113,0.12); color: var(--danger); }
+
+    /* NOTES */
+    .notes-panel {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 24px;
+    }
+
+    .notes-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-style: italic;
+      color: var(--pink-light);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-area {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text2);
+      font-family: 'Crimson Text', serif;
+      font-size: 15px;
+      line-height: 1.7;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* HABIT GRID */
+    .habit-day {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: rgba(139,92,246,0.1);
+      border: 0.5px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .habit-day:hover { background: rgba(139,92,246,0.25); }
+    .habit-day.filled      { background: var(--purple-dark); border-color: var(--purple); }
+    .habit-day.filled-more { background: var(--pink);        border-color: var(--pink); }
+
+    /* FONT UTILITY CLASSES */
+    .font-aquiline       { font-family: 'UnifrakturMaguntia', cursive; }
+    .font-aviorte        { font-family: 'Playfair Display', serif; font-style: italic; }
+    .font-cinematografica{ font-family: 'Cinzel', serif; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; }
+    .font-beauty         { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; }
+    .font-gary           { font-family: 'Crimson Text', serif; font-style: italic; }
+    .font-lostar         { font-family: 'Cinzel', serif; letter-spacing: 4px; }
+    .font-germanica      { font-family: 'IM Fell English', serif; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 0.5px solid var(--border2);
+      border-radius: 16px;
+      padding: 28px;
+      width: 460px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--violet);
+      margin-bottom: 22px;
+    }
+
+    .form-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg);
+      border: 0.5px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-family: 'Crimson Text', serif;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus { border-color: var(--purple); }
+
+    select.form-input { cursor: pointer; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    .empty-state {
+      text-align: center;
+      padding: 56px 0;
+      color: var(--muted);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 18px;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.5); }
+  </style>
+</head>
+<body>
+
+<div class="app" id="appRoot">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="logo-text">Lohan</div>
+        <div class="logo-sub">Productivity Sanctum</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn" onclick="document.getElementById('habitModal').classList.add('open')">
+          <i class="ti ti-flame"></i> Habits
+        </button>
+        <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('open')">
+          <i class="ti ti-plus"></i> New Task
+        </button>
+      </div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">Categories</div>
+      <button class="cat-btn active" onclick="filterCat('all',this)">
+        <span class="cat-icon"><i class="ti ti-layout-grid"></i></span>
+        All Tasks
+        <span class="cat-count" id="cnt-all">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('work',this)">
+        <span class="cat-icon"><i class="ti ti-briefcase"></i></span>
+        Work
+        <span class="cat-count" id="cnt-work">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('personal',this)">
+        <span class="cat-icon"><i class="ti ti-user"></i></span>
+        Personal
+        <span class="cat-count" id="cnt-personal">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('study',this)">
+        <span class="cat-icon"><i class="ti ti-book"></i></span>
+        Study
+        <span class="cat-count" id="cnt-study">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('health',this)">
+        <span class="cat-icon"><i class="ti ti-heart"></i></span>
+        Health
+        <span class="cat-count" id="cnt-health">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('creative',this)">
+        <span class="cat-icon"><i class="ti ti-palette"></i></span>
+        Creative
+        <span class="cat-count" id="cnt-creative">0</span>
+      </button>
+
+      <hr class="sidebar-sep">
+
+      <div class="sidebar-title">Priority</div>
+      <button class="cat-btn" onclick="filterPri('high',this)">
+        <span class="priority-dot p-high"></span> High
+        <span class="cat-count" id="cnt-high" style="color:var(--danger)">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterPri('medium',this)">
+        <span class="priority-dot p-med"></span> Medium
+        <span class="cat-count" id="cnt-medium" style="color:var(--warning)">0</span>
+      </button>
+      <button class="cat-btn" onclick="filterPri('low',this)">
+        <span class="priority-dot p-low"></span> Low
+        <span class="cat-count" id="cnt-low" style="color:var(--info)">0</span>
+      </button>
+
+      <hr class="sidebar-sep">
+
+      <div class="font-showcase">
+        <div class="sidebar-title" style="margin-bottom:14px">Font Styles</div>
+        <div class="font-row">
+          <span class="font-name">Aquiline</span>
+          <span class="font-aquiline" style="font-size:22px;color:var(--violet)">Lohan</span>
+        </div>
+        <div class="font-row">
+          <span class="font-name">Aviorte</span>
+          <span class="font-aviorte" style="font-size:20px;color:var(--pink-light)">Lohan</span>
+        </div>
+        <div class="font-row">
+          <span class="font-name">Cinematografica</span>
+          <span class="font-cinematografica" style="font-size:12px;color:var(--text)">LOHAN</span>
+        </div>
+        <div class="font-row">
+          <span class="font-name">Gary Downley</span>
+          <span class="font-gary" style="font-size:20px;color:var(--text2)">Lohan</span>
+        </div>
+        <div class="font-row">
+          <span class="font-name">Germanica</span>
+          <span class="font-germanica" style="font-size:20px;color:var(--pink-light)">Lohan</span>
+        </div>
+        <div class="font-row">
+          <span class="font-name">Lostar</span>
+          <span class="font-lostar" style="font-size:12px;color:var(--text)">LOHAN</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="content-header">
+        <div>
+          <div class="section-title" id="sectionTitle">All Tasks</div>
+          <div class="section-sub" id="sectionSub">your progress sanctum</div>
+        </div>
+        <div class="toolbar">
+          <button class="btn" onclick="toggleSort()" title="Sort A-Z">
+            <i class="ti ti-arrows-sort"></i> Sort
+          </button>
+          <button class="btn btn-danger" onclick="clearDone()">
+            <i class="ti ti-trash"></i> Clear done
+          </button>
+        </div>
+      </div>
+
+      <!-- QUICK ADD -->
+      <div class="add-row">
+        <i class="ti ti-pencil" style="color:var(--muted);font-size:17px"></i>
+        <input class="add-input" id="quickAdd" placeholder="Quick add a task... press Enter" onkeydown="if(event.key==='Enter')quickAddTask()">
+        <button class="btn btn-primary" onclick="quickAddTask()" style="padding:7px 14px">Add</button>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-row">
+        <button class="filter-chip active" onclick="filterStatus('all',this)">All</button>
+        <button class="filter-chip" onclick="filterStatus('active',this)">Active</button>
+        <button class="filter-chip" onclick="filterStatus('done',this)">Completed</button>
+        <button class="filter-chip" onclick="filterStatus('today',this)">Due Today</button>
+        <button class="filter-chip" onclick="filterStatus('overdue',this)">Overdue</button>
+      </div>
+
+      <!-- PROGRESS -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--muted)">PROGRESS</span>
+        <span id="progressPct" style="font-family:'Cinzel',serif;font-size:11px;color:var(--violet);margin-left:auto">0%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+
+      <!-- TASK LIST -->
+      <div id="taskList"></div>
+
+      <!-- NOTES -->
+      <div class="notes-panel">
+        <div class="notes-title">
+          <i class="ti ti-feather" style="font-size:17px;color:var(--pink)"></i>
+          <span class="font-beauty">Daily Notes &amp; Reflections</span>
+        </div>
+        <textarea class="notes-area" id="notesArea" placeholder="Write your thoughts, plans, or reflections here..." rows="5" oninput="saveNotes()"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeModal('addModal')">
+  <div class="modal">
+    <div class="modal-title font-aviorte">Add New Task</div>
+    <label class="form-label">Task Name</label>
+    <input class="form-input" id="taskName" placeholder="What needs to be done?">
+    <div class="form-row">
+      <div>
+        <label class="form-label">Category</label>
+        <select class="form-input" id="taskCat">
+          <option value="work">Work</option>
+          <option value="personal">Personal</option>
+          <option value="study">Study</option>
+          <option value="health">Health</option>
+          <option value="creative">Creative</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Priority</label>
+        <select class="form-input" id="taskPri">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label class="form-label">Due Date</label>
+        <input class="form-input" id="taskDate" type="date">
+      </div>
+      <div>
+        <label class="form-label">Font Style</label>
+        <select class="form-input" id="taskFont">
+          <option value="">Default (Crimson)</option>
+          <option value="font-aquiline">Aquiline</option>
+          <option value="font-aviorte">Aviorte (Italic)</option>
+          <option value="font-cinematografica">Cinematografica</option>
+          <option value="font-gary">Gary Downley Script</option>
+          <option value="font-germanica">Germanica</option>
+          <option value="font-lostar">Lostar</option>
+        </select>
+      </div>
+    </div>
+    <label class="form-label">Notes (optional)</label>
+    <input class="form-input" id="taskNote" placeholder="Any extra details...">
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn" onclick="closeModal('addModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addTask()"><i class="ti ti-check"></i> Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- HABIT MODAL -->
+<div class="modal-overlay" id="habitModal" onclick="if(event.target===this)closeModal('habitModal')">
+  <div class="modal" style="width:540px">
+    <div class="modal-title font-aviorte">Habit Tracker</div>
+    <div id="habitContent"></div>
+    <div style="margin-top:18px">
+      <label class="form-label">Add New Habit</label>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" id="habitName" placeholder="e.g. Morning meditation..." style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter')addHabit()">
+        <button class="btn btn-primary" onclick="addHabit()"><i class="ti ti-plus"></i> Add</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:18px">
+      <button class="btn" onclick="closeModal('habitModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let tasks     = JSON.parse(localStorage.getItem('lohan_tasks')     || '[]');
+  let habits    = JSON.parse(localStorage.getItem('lohan_habits')    || '[]');
+  let habitLogs = JSON.parse(localStorage.getItem('lohan_habitlogs') || '{}');
+
+  let currentCat    = 'all';
+  let currentStatus = 'all';
+  let currentPri    = null;
+  let sortAsc       = false;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  /* ── PERSISTENCE ── */
+  function saveNotes() {
+    localStorage.setItem('lohan_notes', document.getElementById('notesArea').value);
+  }
+  function loadNotes() {
+    document.getElementById('notesArea').value = localStorage.getItem('lohan_notes') || '';
+  }
+  function save() {
+    localStorage.setItem('lohan_tasks', JSON.stringify(tasks));
+    render();
+  }
+  function saveHabits() {
+    localStorage.setItem('lohan_habits',    JSON.stringify(habits));
+    localStorage.setItem('lohan_habitlogs', JSON.stringify(habitLogs));
+  }
+
+  /* ── MODAL ── */
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  /* ── FILTERS ── */
+  function filterCat(cat, el) {
+    currentCat = cat; currentPri = null;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('sectionTitle').textContent =
+      cat === 'all' ? 'All Tasks' : cat.charAt(0).toUpperCase() + cat.slice(1);
+    render();
+  }
+
+  function filterPri(pri, el) {
+    currentPri = pri; currentCat = 'all';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('sectionTitle').textContent =
+      pri.charAt(0).toUpperCase() + pri.slice(1) + ' Priority';
+    render();
+  }
+
+  function filterStatus(status, el) {
+    currentStatus = status;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    render();
+  }
+
+  function toggleSort() { sortAsc = !sortAsc; render(); }
+
+  function clearDone() {
+    if (!tasks.some(t => t.done)) return;
+    if (confirm('Remove all completed tasks?')) { tasks = tasks.filter(t => !t.done); save(); }
+  }
+
+  /* ── QUICK ADD ── */
+  function quickAddTask() {
+    const v = document.getElementById('quickAdd').value.trim();
+    if (!v) return;
+    tasks.unshift({ id: Date.now(), title: v, cat: 'personal', priority: 'medium', due: '', note: '', done: false, font: '', created: today });
+    document.getElementById('quickAdd').value = '';
+    save();
+  }
+
+  /* ── ADD TASK (modal) ── */
+  function addTask() {
+    const name = document.getElementById('taskName').value.trim();
+    if (!name) { document.getElementById('taskName').focus(); return; }
+    tasks.unshift({
+      id:       Date.now(),
+      title:    name,
+      cat:      document.getElementById('taskCat').value,
+      priority: document.getElementById('taskPri').value,
+      due:      document.getElementById('taskDate').value,
+      note:     document.getElementById('taskNote').value,
+      done:     false,
+      font:     document.getElementById('taskFont').value,
+      created:  today
+    });
+    ['taskName','taskNote'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('taskDate').value = '';
+    closeModal('addModal');
+    save();
+  }
+
+  /* ── TOGGLE / DELETE ── */
+  function toggleDone(id) {
+    const t = tasks.find(t => t.id === id);
+    if (t) { t.done = !t.done; save(); }
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    save();
+  }
+
+  /* ── GET FILTERED ── */
+  function getFiltered() {
+    let list = [...tasks];
+    if (currentPri)            list = list.filter(t => t.priority === currentPri);
+    else if (currentCat !== 'all') list = list.filter(t => t.cat === currentCat);
+    if      (currentStatus === 'active')  list = list.filter(t => !t.done);
+    else if (currentStatus === 'done')    list = list.filter(t =>  t.done);
+    else if (currentStatus === 'today')   list = list.filter(t => t.due === today);
+    else if (currentStatus === 'overdue') list = list.filter(t => !t.done && t.due && t.due < today);
+    if (sortAsc) list.sort((a, b) => a.title.localeCompare(b.title));
+    return list;
+  }
+
+  /* ── RENDER ── */
+  function render() {
+    const list  = getFiltered();
+    const done  = tasks.filter(t =>  t.done).length;
+    const total = tasks.length;
+    const pct   = total ? Math.round(done / total * 100) : 0;
+
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent  = pct + '%';
+
+    ['work','personal','study','health','creative'].forEach(c => {
+      const el = document.getElementById('cnt-' + c);
+      if (el) el.textContent = tasks.filter(t => t.cat === c && !t.done).length;
+    });
+    document.getElementById('cnt-all').textContent    = tasks.filter(t => !t.done).length;
+    ['high','medium','low'].forEach(p => {
+      const el = document.getElementById('cnt-' + p);
+      if (el) el.textContent = tasks.filter(t => t.priority === p && !t.done).length;
+    });
+
+    document.getElementById('statsRow').innerHTML = `
+      <div class="stat-card"><span class="stat-num">${total}</span><div class="stat-label">Total</div></div>
+      <div class="stat-card"><span class="stat-num">${total - done}</span><div class="stat-label">Pending</div></div>
+      <div class="stat-card"><span class="stat-num">${done}</span><div class="stat-label">Completed</div></div>
+      <div class="stat-card"><span class="stat-num">${pct}%</span><div class="stat-label">Progress</div></div>
+    `;
+
+    const groups = { high: [], medium: [], low: [] };
+    list.forEach(t => (groups[t.priority] || groups.medium).push(t));
+
+    const priLabel = { high: 'High Priority', medium: 'Medium Priority', low: 'Low Priority' };
+    let html = '';
+
+    ['high','medium','low'].forEach(pri => {
+      const g = groups[pri];
+      if (!g.length) return;
+      html += `<div class="task-group"><div class="task-group-title">${priLabel[pri]}</div>`;
+      g.forEach(t => {
+        const overdue  = !t.done && t.due && t.due < today;
+        const dueToday = t.due === today;
+        html += `
+          <div class="task-item ${t.done ? 'done' : ''}" onclick="toggleDone(${t.id})">
+            <div class="task-check ${t.done ? 'checked' : ''}"></div>
+            <div class="task-body">
+              <div class="task-title ${t.font || ''}">${escHtml(t.title)}</div>
+              <div class="task-meta">
+                <span class="badge badge-cat">${t.cat}</span>
+                <span class="badge badge-${t.priority}">${t.priority}</span>
+                ${t.due ? `<span class="task-due" style="${overdue ? 'color:var(--danger)' : dueToday ? 'color:var(--warning)' : ''}">
+                  ${overdue ? '⚠ overdue: ' : dueToday ? 'today: ' : 'due: '}${t.due}
+                </span>` : ''}
+                ${t.note ? `<span class="task-due">— ${escHtml(t.note)}</span>` : ''}
+              </div>
+            </div>
+            <div class="task-actions" onclick="event.stopPropagation()">
+              <button class="icon-btn" onclick="deleteTask(${t.id})" title="Delete task">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+
+    document.getElementById('taskList').innerHTML =
+      html || `<div class="empty-state">No tasks found. Add one above ✦</div>`;
+
+    renderHabits();
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── HABITS ── */
+  function addHabit() {
+    const v = document.getElementById('habitName').value.trim();
+    if (!v) return;
+    habits.push({ id: Date.now(), name: v });
+    document.getElementById('habitName').value = '';
+    saveHabits(); renderHabits();
+  }
+
+  function toggleHabitDay(hid, day) {
+    const key = hid + '_' + day;
+    const cur = habitLogs[key] || 0;
+    habitLogs[key] = cur === 0 ? 1 : cur === 1 ? 2 : 0;
+    if (habitLogs[key] === 0) delete habitLogs[key];
+    saveHabits(); renderHabits();
+  }
+
+  function renderHabits() {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      days.push(d.toISOString().split('T')[0]);
+    }
+    const dayLabels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    let html = '';
+
+    if (!habits.length) {
+      html = '<div style="color:var(--muted);font-size:14px;font-style:italic;margin-bottom:14px;font-family:\'Crimson Text\',serif">No habits yet — add one below to start tracking.</div>';
+    }
+
+    habits.forEach(h => {
+      html += `<div style="margin-bottom:18px">
+        <div style="font-family:'Crimson Text',serif;font-size:16px;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
+          ${escHtml(h.name)}
+          <button onclick="habits=habits.filter(x=>x.id!==${h.id});saveHabits();renderHabits()" style="border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px" title="Remove habit">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">`;
+      days.forEach(day => {
+        const key = h.id + '_' + day;
+        const v   = habitLogs[key] || 0;
+        const cls = v === 2 ? 'filled-more' : v === 1 ? 'filled' : '';
+        const lbl = dayLabels[new Date(day + 'T00:00:00').getDay()];
+        html += `<div style="text-align:center">
+          <div style="font-size:9px;color:var(--muted);margin-bottom:4px;font-family:'Cinzel',serif">${lbl}</div>
+          <div class="habit-day ${cls}" onclick="toggleHabitDay(${h.id},'${day}')" title="${day}"></div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+
+    document.getElementById('habitContent').innerHTML = html;
+  }
+
+  /* ── SEED DATA (first visit) ── */
+  if (!tasks.length) {
+    tasks = [
+      { id:1, title:'Review project proposal',         cat:'work',     priority:'high',   due:today, note:'Send to manager', done:false, font:'font-cinematografica', created:today },
+      { id:2, title:'Morning meditation & journaling', cat:'health',   priority:'medium', due:'',    note:'',                done:true,  font:'font-aviorte',         created:today },
+      { id:3, title:'Read Chapter 5 of design book',  cat:'study',    priority:'low',    due:'',    note:'',                done:false, font:'font-gary',            created:today },
+      { id:4, title:'Sketch concept for new artwork',  cat:'creative', priority:'medium', due:'',    note:'',                done:false, font:'font-germanica',       created:today },
+      { id:5, title:'Evening walk — 30 minutes',       cat:'health',   priority:'low',    due:today, note:'',                done:false, font:'',                     created:today },
+    ];
+    save();
+  }
+
+  loadNotes();
+  render();
+</script>
+</body>
+</html>
